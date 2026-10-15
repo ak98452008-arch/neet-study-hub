@@ -1,0 +1,13 @@
+{
+  "name": "NEET Study Hub",
+  "short_name": "NEET Hub",
+  "description": "A focused study library and practice space for NEET preparation.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#101828",
+  "icons": [
+    {"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
