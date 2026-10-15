@@ -1,0 +1,593 @@
+\<!DOCTYPE html\>
+
+\<html lang="en"\>
+
+\<head\>
+
+\<meta charset="UTF-8"\>
+
+\<meta name="viewport" content="width=device-width, initial-scale=1.0"\>
+
+\<title\>StudyStark - Free Batches, Lectures & PDFs\</title\>
+
+\<!-- Tailwind CSS CDN --\>
+
+\<script src="https://cdn.tailwindcss.com"\>\</script\>
+
+\<!-- FontAwesome Icons --\>
+
+\<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"\>
+
+\<!-- Alpine.js for interactivity --\>
+
+\<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"\>\</script\>
+
+\</head\>
+
+\<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col" x-data="appData()"\>
+
+\<!-- Navbar --\>
+
+\<header class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50"\>
+
+\<div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between"\>
+
+\<div class="flex items-center space-x-3 cursor-pointer" @click="currentTab = 'home'"\>
+
+\<div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-xl flex items-center justify-center w-10 h-10"\>
+
+SS
+
+\</div\>
+
+\<span class="text-xl font-extrabold tracking-wide text-white"\>Study\<span class="text-indigo-400"\>Stark\</span\>\</span\>
+
+\</div\>
+
+\<nav class="hidden md:flex space-x-6 font-medium text-sm"\>
+
+\<button @click="currentTab = 'home'" :class="currentTab === 'home' ? 'text-indigo-400' : 'text-gray-300 hover:text-white'"\>Home\</button\>
+
+\<button @click="currentTab = 'batches'" :class="currentTab === 'batches' ? 'text-indigo-400' : 'text-gray-300 hover:text-white'"\>Batches\</button\>
+
+\<button @click="currentTab = 'pdfs'" :class="currentTab === 'pdfs' ? 'text-indigo-400' : 'text-gray-300 hover:text-white'"\>PDF Notes\</button\>
+
+\</nav\>
+
+\<div class="flex items-center space-x-3"\>
+
+\<button @click="openAuthModal = true" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition"\>
+
+\<i class="fa-solid fa-key mr-1"\>\</i\> Key / Auth
+
+\</button\>
+
+\</div\>
+
+\</div\>
+
+\</header\>
+
+\<!-- Main Content --\>
+
+\<main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6"\>
+
+\<!-- HOME TAB --\>
+
+\<template x-if="currentTab === 'home'"\>
+
+\<div class="space-y-8"\>
+
+\<!-- Hero Banner --\>
+
+\<div class="bg-gradient-to-r from-indigo-900 via-purple-900 to-gray-800 rounded-2xl p-6 md:p-10 border border-indigo-500/20 shadow-xl"\>
+
+\<div class="max-w-2xl"\>
+
+\<span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs px-3 py-1 rounded-full font-semibold"\>100% Free Access\</span\>
+
+\<h1 class="text-3xl md:text-5xl font-extrabold mt-3 text-white leading-tight"\>Learn More. Achieve More.\</h1\>
+
+\<p class="text-gray-300 mt-3 text-sm md:text-base"\>Access high-quality study materials, video lectures, batch modules, and practice PDFs — all in one place.\</p\>
+
+\<div class="mt-6 flex flex-wrap gap-3"\>
+
+\<button @click="currentTab = 'batches'" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition"\>
+
+Explore Batches \<i class="fa-solid fa-arrow-right ml-1"\>\</i\>
+
+\</button\>
+
+\<button @click="openDonateModal = true" class="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition"\>
+
+\<i class="fa-solid fa-hand-holding-heart text-red-400 mr-1"\>\</i\> Donate Batch
+
+\</button\>
+
+\</div\>
+
+\</div\>
+
+\</div\>
+
+\<!-- Search & Category Filters --\>
+
+\<div class="flex flex-col md:flex-row items-center justify-between gap-4"\>
+
+\<div class="relative w-full md:w-96"\>
+
+\<i class="fa-solid fa-search absolute left-3 top-3.5 text-gray-400"\>\</i\>
+
+\<input type="text" x-model="searchQuery" placeholder="Search batch, subject, or chapter..." class="w-full bg-gray-800 border border-gray-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500"\>
+
+\</div\>
+
+\<div class="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0"\>
+
+\<template x-for="cat in \['All', 'JEE', 'NEET', 'Class 12', 'Class 11'\]"\>
+
+\<button @click="selectedCategory = cat"
+
+:class="selectedCategory === cat ? 'bg-indigo-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'"
+
+class="px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition" x-text="cat"\>\</button\>
+
+\</template\>
+
+\</div\>
+
+\</div\>
+
+\<!-- Batches Grid --\>
+
+\<div\>
+
+\<h2 class="text-xl font-bold mb-4 flex items-center gap-2"\>
+
+\<i class="fa-solid fa-graduation-cap text-indigo-400"\>\</i\> Featured Batches
+
+\</h2\>
+
+\<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"\>
+
+\<template x-for="batch in filteredBatches" :key="batch.id"\>
+
+\<div class="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-indigo-500/50 transition flex flex-col justify-between"\>
+
+\<div\>
+
+\<div class="h-36 bg-gray-700 relative overflow-hidden"\>
+
+\<img :src="batch.image" class="w-full h-full object-cover"\>
+
+\<span class="absolute top-2 right-2 bg-indigo-600 text-white text-\[10px\] uppercase font-bold px-2 py-0.5 rounded" x-text="batch.target"\>\</span\>
+
+\</div\>
+
+\<div class="p-4"\>
+
+\<h3 class="font-bold text-lg text-white" x-text="batch.title"\>\</h3\>
+
+\<p class="text-gray-400 text-xs mt-1" x-text="batch.description"\>\</p\>
+
+\<div class="mt-3 flex items-center justify-between text-xs text-gray-400"\>
+
+\<span\>\<i class="fa-solid fa-video text-indigo-400 mr-1"\>\</i\> \<span x-text="batch.lectures"\>\</span\> Lectures\</span\>
+
+\<span\>\<i class="fa-solid fa-file-pdf text-red-400 mr-1"\>\</i\> \<span x-text="batch.pdfs"\>\</span\> PDFs\</span\>
+
+\</div\>
+
+\</div\>
+
+\</div\>
+
+\<div class="p-4 border-t border-gray-700/50"\>
+
+\<button @click="openBatch(batch)" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-xs font-semibold transition"\>
+
+View Content
+
+\</button\>
+
+\</div\>
+
+\</div\>
+
+\</template\>
+
+\</div\>
+
+\</div\>
+
+\</div\>
+
+\</template\>
+
+\<!-- BATCH DETAIL VIEW --\>
+
+\<template x-if="currentTab === 'batch-detail'"\>
+
+\<div class="space-y-6" x-data="{ activeSubject: activeBatch.subjects\[0\] }"\>
+
+\<button @click="currentTab = 'home'" class="text-gray-400 hover:text-white text-xs font-semibold flex items-center gap-1"\>
+
+\<i class="fa-solid fa-arrow-left"\>\</i\> Back to Batches
+
+\</button\>
+
+\<div class="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"\>
+
+\<div\>
+
+\<span class="text-xs text-indigo-400 font-semibold uppercase tracking-wider" x-text="activeBatch.target"\>\</span\>
+
+\<h1 class="text-2xl font-bold text-white mt-1" x-text="activeBatch.title"\>\</h1\>
+
+\<p class="text-xs text-gray-400 mt-1" x-text="activeBatch.description"\>\</p\>
+
+\</div\>
+
+\</div\>
+
+\<!-- Subject Tabs --\>
+
+\<div class="flex gap-2 border-b border-gray-700 pb-2"\>
+
+\<template x-for="subj in activeBatch.subjects" :key="subj.name"\>
+
+\<button @click="activeSubject = subj"
+
+:class="activeSubject.name === subj.name ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-200'"
+
+class="px-4 py-2 border-b-2 font-medium text-sm transition" x-text="subj.name"\>\</button\>
+
+\</template\>
+
+\</div\>
+
+\<!-- Lectures List --\>
+
+\<div class="space-y-3"\>
+
+\<template x-for="lecture in activeSubject.lectures" :key="lecture.id"\>
+
+\<div class="bg-gray-800 p-4 rounded-xl border border-gray-700/70 flex flex-col md:flex-row items-start md:items-center justify-between gap-3"\>
+
+\<div class="flex items-center gap-3"\>
+
+\<div class="w-10 h-10 rounded-lg bg-indigo-600/20 text-indigo-400 flex items-center justify-center flex-shrink-0"\>
+
+\<i class="fa-solid fa-play"\>\</i\>
+
+\</div\>
+
+\<div\>
+
+\<h4 class="font-semibold text-sm text-white" x-text="lecture.title"\>\</h4\>
+
+\<p class="text-xs text-gray-400 mt-0.5"\>Duration: \<span x-text="lecture.duration"\>\</span\>\</p\>
+
+\</div\>
+
+\</div\>
+
+\<div class="flex items-center gap-2 w-full md:w-auto"\>
+
+\<button @click="playVideo(lecture)" class="flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition"\>
+
+\<i class="fa-solid fa-play mr-1"\>\</i\> Watch
+
+\</button\>
+
+\<a :href="lecture.pdfUrl" target="\_blank" class="flex-1 md:flex-none bg-gray-700 hover:bg-gray-600 text-gray-200 text-center px-3 py-1.5 rounded-lg text-xs font-medium transition"\>
+
+\<i class="fa-solid fa-file-pdf text-red-400 mr-1"\>\</i\> Notes
+
+\</a\>
+
+\</div\>
+
+\</div\>
+
+\</template\>
+
+\</div\>
+
+\</div\>
+
+\</template\>
+
+\<!-- PDF NOTES TAB --\>
+
+\<template x-if="currentTab === 'pdfs'"\>
+
+\<div class="space-y-6"\>
+
+\<h2 class="text-2xl font-bold"\>Study Notes & PDFs\</h2\>
+
+\<div class="grid grid-cols-1 md:grid-cols-2 gap-4"\>
+
+\<template x-for="pdf in pdfList" :key="pdf.id"\>
+
+\<div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex items-center justify-between"\>
+
+\<div class="flex items-center gap-3"\>
+
+\<i class="fa-solid fa-file-pdf text-red-500 text-2xl"\>\</i\>
+
+\<div\>
+
+\<h4 class="font-semibold text-sm text-white" x-text="pdf.name"\>\</h4\>
+
+\<p class="text-xs text-gray-400" x-text="pdf.size"\>\</p\>
+
+\</div\>
+
+\</div\>
+
+\<a :href="pdf.url" target="\_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition"\>
+
+\<i class="fa-solid fa-download mr-1"\>\</i\> Get PDF
+
+\</a\>
+
+\</div\>
+
+\</template\>
+
+\</div\>
+
+\</div\>
+
+\</template\>
+
+\</main\>
+
+\<!-- Video Player Modal --\>
+
+\<div x-show="openVideoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" x-cloak\>
+
+\<div class="bg-gray-800 rounded-2xl w-full max-w-4xl overflow-hidden border border-gray-700"\>
+
+\<div class="p-4 border-b border-gray-700 flex justify-between items-center"\>
+
+\<h3 class="font-bold text-sm text-white" x-text="activeVideo?.title"\>\</h3\>
+
+\<button @click="openVideoModal = false" class="text-gray-400 hover:text-white"\>\<i class="fa-solid fa-xmark text-lg"\>\</i\>\</button\>
+
+\</div\>
+
+\<div class="aspect-video bg-black flex items-center justify-center"\>
+
+\<iframe x-if="activeVideo" :src="activeVideo?.embedUrl" class="w-full h-full" frameborder="0" allowfullscreen\>\</iframe\>
+
+\</div\>
+
+\</div\>
+
+\</div\>
+
+\<!-- Key Authentication Modal --\>
+
+\<div x-show="openAuthModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" x-cloak\>
+
+\<div class="bg-gray-800 rounded-xl w-full max-w-md p-6 border border-gray-700 space-y-4"\>
+
+\<div class="flex justify-between items-center"\>
+
+\<h3 class="font-bold text-lg text-white"\>Enter Batch Token / Key\</h3\>
+
+\<button @click="openAuthModal = false" class="text-gray-400 hover:text-white"\>\<i class="fa-solid fa-xmark"\>\</i\>\</button\>
+
+\</div\>
+
+\<p class="text-xs text-gray-400"\>Generate your free access key or enter batch token to unlock premium batches.\</p\>
+
+\<input type="text" placeholder="e.g. STARK-BATCH-2026" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"\>
+
+\<button @click="openAuthModal = false" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-sm font-semibold transition"\>
+
+Verify & Continue
+
+\</button\>
+
+\</div\>
+
+\</div\>
+
+\<!-- Donate Batch Modal --\>
+
+\<div x-show="openDonateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" x-cloak\>
+
+\<div class="bg-gray-800 rounded-xl w-full max-w-md p-6 border border-gray-700 space-y-4"\>
+
+\<div class="flex justify-between items-center"\>
+
+\<h3 class="font-bold text-lg text-white"\>Donate Batch Token\</h3\>
+
+\<button @click="openDonateModal = false" class="text-gray-400 hover:text-white"\>\<i class="fa-solid fa-xmark"\>\</i\>\</button\>
+
+\</div\>
+
+\<p class="text-xs text-gray-400"\>Share your batch access with fellow students to keep education free for everyone.\</p\>
+
+\<input type="text" placeholder="Batch Name / Token Link" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"\>
+
+\<button @click="openDonateModal = false; alert('Thank you for contributing!')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-sm font-semibold transition"\>
+
+Submit Contribution
+
+\</button\>
+
+\</div\>
+
+\</div\>
+
+\<!-- Footer --\>
+
+\<footer class="bg-gray-800 border-t border-gray-700 py-6 text-center text-xs text-gray-400 mt-auto"\>
+
+\<p\>© 2026 StudyStark Clone. For educational purposes only.\</p\>
+
+\</footer\>
+
+\<!-- Application State Logic --\>
+
+\<script\>
+
+function appData() {
+
+return {
+
+currentTab: 'home',
+
+searchQuery: '',
+
+selectedCategory: 'All',
+
+openVideoModal: false,
+
+openAuthModal: false,
+
+openDonateModal: false,
+
+activeBatch: null,
+
+activeVideo: null,
+
+batches: \[
+
+{
+
+id: 1,
+
+title: "Lakshya JEE 2026",
+
+target: "JEE",
+
+description: "Complete Class 12 JEE Main & Advanced prep with top faculty.",
+
+image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500&q=80",
+
+lectures: 140,
+
+pdfs: 120,
+
+subjects: \[
+
+{
+
+name: "Physics",
+
+lectures: \[
+
+{ id: 101, title: "Electrostatics 01: Coulomb's Law", duration: "1h 15m", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", pdfUrl: "#" },
+
+{ id: 102, title: "Electrostatics 02: Electric Field Lines", duration: "1h 30m", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", pdfUrl: "#" }
+
+\]
+
+},
+
+{
+
+name: "Mathematics",
+
+lectures: \[
+
+{ id: 103, title: "Calculus 01: Limits & Continuity", duration: "1h 10m", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", pdfUrl: "#" }
+
+\]
+
+}
+
+\]
+
+},
+
+{
+
+id: 2,
+
+title: "Yakeen NEET 2026",
+
+target: "NEET",
+
+description: "Comprehensive repeater batch for NEET UG preparation.",
+
+image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500&q=80",
+
+lectures: 210,
+
+pdfs: 180,
+
+subjects: \[
+
+{
+
+name: "Biology",
+
+lectures: \[
+
+{ id: 201, title: "Cell Cycle & Cell Division 01", duration: "1h 05m", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", pdfUrl: "#" }
+
+\]
+
+}
+
+\]
+
+}
+
+\],
+
+pdfList: \[
+
+{ id: 1, name: "Physics Class 12 Formulas Sheet.pdf", size: "4.2 MB", url: "#" },
+
+{ id: 2, name: "Organic Chemistry Reaction Roadmap.pdf", size: "8.1 MB", url: "#" }
+
+\],
+
+get filteredBatches() {
+
+return this.batches.filter(b =\> {
+
+const matchesCategory = this.selectedCategory === 'All' \|\| b.target === this.selectedCategory;
+
+const matchesSearch = b.title.toLowerCase().includes(this.searchQuery.toLowerCase()) \|\|
+
+b.description.toLowerCase().includes(this.searchQuery.toLowerCase());
+
+return matchesCategory && matchesSearch;
+
+});
+
+},
+
+openBatch(batch) {
+
+this.activeBatch = batch;
+
+this.currentTab = 'batch-detail';
+
+},
+
+playVideo(lecture) {
+
+this.activeVideo = lecture;
+
+this.openVideoModal = true;
+
+}
+
+}
+
+}
+
+\</script\>
+
+\</body\>
+
+\</html\>
