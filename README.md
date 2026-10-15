@@ -1,48 +1,84 @@
-# @Ayush9845 JEE/NEET AI — Groq + Cloudflare Worker + GitHub Pages
+# @Ayush9845 — Owner-only PDF upload system
 
-This starter connects the static website to Groq through a Cloudflare Worker. The Groq API key is read only by the Worker from a server-side secret.
+This add-on is designed for a static GitHub Pages frontend and a Cloudflare Worker backend. It uses a **private Cloudflare R2 bucket** for PDF bytes and a **Cloudflare D1 database** for the catalogue. The Worker also retains the `/api/chat` Groq route so you can use one backend for both features.
 
 ## Files
-- `index.html`, `style.css`, `app.js`: website frontend
-- `worker.js`: secure proxy endpoint (`POST /api/chat`) calling Groq
-- `wrangler.toml`: basic Worker project settings
 
-## Important security notes
-- NEVER put `GROQ_API_KEY` in `app.js`, HTML, or a public GitHub repository. Add it as a Cloudflare Worker secret.
-- `ALLOWED_ORIGIN` should be the exact origin of your published site, with no path and no trailing slash. Example: `https://YOUR-USERNAME.github.io`. For a project page, the browser Origin is still the host origin, not `/repository-name`.
-- CORS is not authentication; non-browser clients can call a public endpoint. Before sharing widely, add rate limiting and abuse monitoring. This starter does not include student accounts, saved history, PDF retrieval, a verified PYQ database, or a complete mock-test engine.
-- Model availability, rate limits, and pricing can change. The default model is `llama-3.3-70b-versatile`; if Groq's console lists a different supported chat model for your account, set `GROQ_MODEL` in Worker variables.
+- `pdf-admin.html` — owner login, upload, preview and delete dashboard.
+- `pdf-library.html` — student-facing PDF catalogue; students can search and open PDFs in the browser.
+- `worker.js` — backend routes for Groq chat, owner login, PDF upload/list/read/delete.
+- `schema.sql` — D1 table setup.
+- `wrangler.toml` — optional Wrangler CLI config template. If using the Cloudflare dashboard, create bindings there instead.
 
-## Step 1 — create a Groq API key
-1. In Safari, open the [Groq Console](https://console.groq.com/).
-2. Sign in/create an account and open the API keys area.
-3. Create a key and copy it once. Treat it like a password; do not paste it into GitHub or send it in chat.
+## Before you begin
 
-## Step 2 — publish the frontend on GitHub Pages (if not already published)
-1. Open your GitHub repository in Safari.
-2. Upload `index.html`, `style.css`, and `app.js` to the repository root.
-3. Go to **Settings → Pages** and choose **Deploy from a branch**, branch `main`, folder `/(root)`, then Save.
-4. Open the published site and note its origin, for example `https://YOUR-USERNAME.github.io`. Use the origin only, not the full repository path.
+1. Revoke the Groq key previously shared in chat and create a replacement. Do not place any key in GitHub.
+2. In Cloudflare, use the Worker you already made for Groq if you want one backend. This `worker.js` includes `/api/chat`; replace the old Worker code with this full file, then add the PDF storage bindings below. Alternatively create a separate Worker and update the frontend URLs.
+3. Do not upload `worker.js`, `wrangler.toml`, or secrets to a public GitHub Pages repository. Paste `worker.js` into the Cloudflare Worker editor. Only upload the two HTML pages to GitHub Pages.
 
-## Step 3 — create the Cloudflare Worker on iPad
-1. Open the [Cloudflare Dashboard](https://dash.cloudflare.com/) in Safari and sign in.
-2. Open **Workers & Pages** and create a Worker. Name it `ayush9845-ai-api`.
-3. Open its code editor and replace the sample code with the full contents of this folder's `worker.js`; save and deploy.
-4. In the Worker settings, find **Variables and Secrets** (the label can vary). Add a **Secret** named `GROQ_API_KEY` and paste your Groq key as its value. Do not create this as a public frontend variable.
-5. Add a **Text** variable named `ALLOWED_ORIGIN`, with your exact GitHub Pages origin (no trailing slash).
-6. Optional: add a **Text** variable named `GROQ_MODEL` with a model ID currently enabled in your Groq Console. If omitted, the code uses `llama-3.3-70b-versatile`.
-7. Save changes and deploy/redeploy the Worker.
+## Cloudflare setup using the iPad dashboard
 
-## Step 4 — connect your website to the Worker
-1. Copy your Worker URL, which will look like `https://ayush9845-ai-api.YOUR-SUBDOMAIN.workers.dev`.
-2. In GitHub, open `app.js` and tap Edit.
-3. At the top, find `AI_API_URL`. Replace its placeholder with your real Worker URL plus `/api/chat`, for example `https://ayush9845-ai-api.YOUR-SUBDOMAIN.workers.dev/api/chat`.
-4. Commit the change and wait for GitHub Pages to update.
+### 1. Create a private R2 bucket
 
-## Step 5 — test
-1. Open the published website in Safari.
-2. Open **AI Doubt Solver**, choose a subject, and ask a short question such as: `Explain Newton's second law with one NEET-level example.`
-3. If it fails, check the Worker URL, `ALLOWED_ORIGIN`, that `GROQ_API_KEY` is a Worker Secret, model ID availability, Groq usage/rate limits, and Cloudflare Worker logs. A direct browser visit to the Worker URL uses GET and should show a 404/405-style JSON response; the endpoint is designed for POST at `/api/chat`.
+- Cloudflare Dashboard → **R2 Object Storage** → **Create bucket**.
+- Bucket name: `ayush9845-study-pdfs` (or use your chosen name consistently).
+- Do **not** enable a public bucket/domain. The Worker serves each PDF after looking it up in D1.
 
-## Model endpoint
-The Worker calls Groq's OpenAI-compatible endpoint `https://api.groq.com/openai/v1/chat/completions` with a server-side Bearer key. See [Groq API reference](https://console.groq.com/docs/api-reference) and [Groq security guidance](https://console.groq.com/docs/production-readiness/security-onboarding).
+### 2. Create a D1 database
+
+- Dashboard → **Workers & Pages** → **D1 SQL Database** (or **Storage & databases → D1**) → Create.
+- Name: `ayush9845-pdf-catalog`.
+- Open its SQL Console and paste all contents of `schema.sql`, then run it.
+
+### 3. Deploy the Worker
+
+- Open your existing Groq Worker (or create `ayush9845-pdf-api`).
+- Paste all of `worker.js` into the editor and deploy.
+- In Worker **Settings → Bindings**, add:
+  - **R2 bucket** binding variable name `PDF_BUCKET`, select your private bucket.
+  - **D1 database** binding variable name `DB`, select your D1 database.
+- In **Settings → Variables and Secrets**, add these values:
+  - `ALLOWED_ORIGIN` — **Text**, exact origin only. Example for a project site `https://USERNAME.github.io/REPOSITORY/`, enter `https://USERNAME.github.io` (no repository path, no trailing slash). If using a custom domain, enter that origin instead.
+  - `OWNER_PASSWORD` — **Secret**, a strong unique owner password. Never share it.
+  - `SESSION_SECRET` — **Secret**, a long random value (at least 32 random characters). Generate it with a trusted password manager; do not reuse your Groq key.
+  - `GROQ_API_KEY` — **Secret**, your newly generated Groq key if you want the AI chat route in this same Worker.
+  - Optional `GROQ_MODEL` — **Text**, e.g. `llama-3.3-70b-versatile` if that model is available to your Groq account.
+- Save changes and redeploy if prompted.
+
+Your Worker URL should look like `https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev`. Test by opening `https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev/api/health`; it should return `{"ok":true,...}`. The health route may be blocked in a browser if you have not set the exact origin on a browser request; the API must still have the correct bindings and variable settings.
+
+## GitHub Pages setup
+
+1. Upload `pdf-admin.html` and `pdf-library.html` into the root of the public GitHub Pages repository. Do not upload `worker.js`, `wrangler.toml`, or API secrets.
+2. In **both** HTML files, find `API_BASE` near the bottom and replace `https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev` with your actual Worker base URL. Do not append `/api`.
+3. Commit the files. GitHub Pages publishes them at:
+   - `https://USERNAME.github.io/REPOSITORY/pdf-admin.html` — owner dashboard
+   - `https://USERNAME.github.io/REPOSITORY/pdf-library.html` — student library
+4. Optional: add links to those two pages in your existing `index.html` navigation:
+
+```html
+<a href="pdf-library.html">PDF Library</a>
+<a href="pdf-admin.html">Owner Login</a>
+```
+
+These links are only navigation. The actual upload permission is enforced by the Worker; hiding the admin link does not provide security.
+
+## How the owner uploads a PDF on iPad
+
+1. Open `pdf-admin.html` on your published site.
+2. Sign in with the password stored in the `OWNER_PASSWORD` Worker secret.
+3. Enter a display title and choose a subject.
+4. Tap the file picker and select a PDF from the iPad Files app. Maximum file size is 25 MB.
+5. Tap **Upload and publish**. It appears in the list and student library.
+6. Use **Delete** to remove a PDF. The Worker deletes the object and catalogue record.
+
+Students open `pdf-library.html`, search, and tap **Read PDF**. PDF bytes are not hosted in a public bucket, and the viewer response uses `Content-Disposition: inline`.
+
+## Important limitations and security
+
+- “View online only” cannot be guaranteed for PDFs. Browsers may let readers save, print, screenshot, or capture displayed content. Do not upload copyrighted or confidential materials unless you have permission to share them.
+- The owner session expires after four hours and is stored in `sessionStorage`, not persistent `localStorage`.
+- This starter has no account system for students, and the public library route intentionally lets anyone who knows the page URL read published PDFs.
+- Add Cloudflare rate limiting/WAF rules before public launch. Consider file quota limits, audit logging, and backup policy for production.
+- `ALLOWED_ORIGIN` is an origin/CORS boundary, not authentication. Owner operations are protected by a signed expiring token plus the server-side password secret.
+- Keep your Worker code and secrets out of public GitHub. If a key was exposed, revoke it and replace it.

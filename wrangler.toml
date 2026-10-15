@@ -1,3 +1,12 @@
-name = "ayush9845-ai-api"
+name = "ayush9845-pdf-api"
 main = "worker.js"
 compatibility_date = "2026-10-16"
+
+[[r2_buckets]]
+binding = "PDF_BUCKET"
+bucket_name = "ayush9845-study-pdfs"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ayush9845-pdf-catalog"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
