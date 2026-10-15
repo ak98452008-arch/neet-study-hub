@@ -1,81 +1,76 @@
-# NEET Study Hub — Starter PWA
+# NEET Study Hub by @Ayush9845 — Cloudflare Pages
 
-A responsive, static starter website for a NEET study library, sample quiz and local progress tracker. It is intentionally backend-free so a beginner can launch it first.
+A responsive, dark premium study hub starter designed to be managed from an iPad. It includes a polished dashboard, study planner and analytics, resource filters, sample quiz, announcements UI, PWA shell, and a single-file Cloudflare Pages advanced-mode backend (`_worker.js`).
 
-## What's included
+## Important: what is real today?
 
-- Responsive dashboard and subject filters
-- Demo resource cards with search
-- Three-question sample quiz with explanations
-- Progress stored in the current browser using `localStorage`
-- PWA manifest and service worker for install/offline shell
-- No API keys, paid content, or credentials required
+### Works immediately in demo mode
+- Responsive dashboard with navy/blue glow styling and `@Ayush9845` branding.
+- Sample library entries and subject/type filters.
+- A 5-question illustrative quiz with scoring and explanations.
+- Local planner tasks, daily goal, and study-minute logs (stored in the current browser/device).
+- Sample notices.
+- Installable PWA shell and basic offline shell caching.
 
-## Run locally
+### Requires Cloudflare backend setup before real use
+- Secure student/owner sessions and accounts.
+- Owner-only cloud resource uploads.
+- Cloud-synced library and notices.
+- Uploaded file delivery from R2.
+- Signed-in study progress, planner tasks and daily goal sync to D1; guests still use device-local storage.
+- A full NEET-sized question bank, configurable exam durations, marking rules and admin question management. The current five questions are only a sample demonstration.
 
-### Option A: VS Code + Live Server
-1. Install Visual Studio Code.
-2. Open this folder in VS Code.
-3. Install the "Live Server" extension.
-4. Right-click `index.html` and choose **Open with Live Server**.
+Never publish paid course content unless you have permission. Use materials you own or are authorized to distribute.
 
-### Option B: Python local server
-Install Python, open a terminal in this folder, and run:
+## Deploy frontend from iPad
+1. Extract the ZIP in the iPad Files app.
+2. In your GitHub repository, upload/replace the files at the repository root. `index.html` must be at the root.
+3. Commit the changes.
+4. In Cloudflare Pages, connect the GitHub repo. Framework preset: **None**; build command: leave blank; build output directory: `/` or `.` (repository root).
+5. After deployment, open the `*.pages.dev` URL in Safari.
 
-```bash
-python -m http.server 8000
-```
+## Backend setup (Cloudflare Dashboard)
+This project uses Cloudflare Pages Functions, D1 and R2. Configure these before enabling real accounts and uploads.
 
-Then open `http://localhost:8000`.
+### 1. Create D1 database
+- Cloudflare Dashboard → Workers & Pages → D1 → Create database.
+- Name it `neet-study-hub-db`.
+- Open the database Console and execute the full contents of `schema.sql`.
+- Pages project → Settings → Bindings → D1 database bindings: variable name `DB`, select `neet-study-hub-db`.
 
-Do not open `index.html` directly as a `file://` URL if you want the service worker/PWA features; they require localhost or HTTPS.
+### 2. Create R2 bucket
+- Cloudflare Dashboard → R2 → Create bucket, e.g. `neet-study-hub-files`.
+- Pages project → Settings → Bindings → R2 bucket bindings: variable name `FILES`, select the bucket.
 
-## Publish on Cloudflare Pages
+### 3. Add secrets
+Pages project → Settings → Variables and Secrets (or Functions variables/secrets):
+- `OWNER_SETUP_SECRET`: a long random secret used only once to bootstrap the owner. Keep it private; never put it in frontend code or GitHub.
+- `SESSION_DAYS`: optional, defaults to 7.
+Redeploy after setting bindings/secrets. Do not send the secret to anyone.
 
-1. Create a GitHub repository and upload the files in this folder.
-2. In Cloudflare, open **Workers & Pages** and create a Pages project connected to that repository.
-3. Choose **Framework preset: None**.
-4. Set the build command to blank (or no build command).
-5. Set the output directory to `/` or the repository root, depending on the dashboard field.
-6. Deploy. Test the resulting HTTPS URL on your phone.
+### 4. Bootstrap owner
+- Open the deployed website and tap **Sign in → Owner setup**.
+- Enter your email, a strong password (at least 10 characters), and the exact `OWNER_SETUP_SECRET` configured in Cloudflare.
+- Owner setup is intended to succeed only once; remove the `OWNER_SETUP_SECRET` variable after the owner is created.
+- After setup, sign in with the owner email/password. The server returns an HttpOnly session cookie.
 
-Cloudflare's UI can change; follow its current Pages setup flow if labels differ.
+### 5. Student accounts
+- Tap Sign in → Create student account. Accounts require the backend to be configured.
+- Signed-in users sync the study-minute log, planner tasks and daily goal to D1. Guest data remains on the current device. Library bookmarks and full test answer-by-answer history are not yet cloud-synced.
 
-## Customize the content
+### 6. Cloudflare Pages deploy behavior
+- `_worker.js` enables Cloudflare Pages advanced mode and routes `/api/*` requests to the backend while serving other files through `env.ASSETS`.
+- `schema.sql` is for manual execution in D1; it is not automatically run by Pages.
+- If a deployment error appears, open Cloudflare Pages → deployment → Build log and check the exact message.
 
-Open `app.js` and edit the `resources` array near the top. Example:
+## Files
+- `index.html`, `styles.css`, `app.js`: frontend
+- `_worker.js`: API endpoints, password/session utilities, owner-only uploads, notices and saved-state API
+- `schema.sql`: D1 schema
+- `wrangler.toml.example`: binding reference
 
-```js
-{
-  id: "bio-new-topic",
-  subject: "Biology",
-  title: "Your chapter title",
-  kind: "PDF notes",
-  detail: "Short description",
-  icon: "▤",
-  link: "https://your-authorized-file-url.example/notes.pdf"
-}
-```
-
-Replace the example URL with a real HTTPS URL for a file you own or have permission to distribute. For a video, link to a source you are allowed to embed or share. Never add private session tokens or credentials to frontend code.
-
-Quiz questions are in the `questions` array in `app.js`.
-
-## Current limitations
-
-- No real login or admin upload yet.
-- Local progress is only stored in the current browser/device and can be cleared.
-- Resource links are not a secure content-protection system.
-- The demo questions are illustrative and not an official NEET paper.
-- Service-worker caching is a basic offline shell, not full offline media storage.
-
-## Recommended next version
-
-1. Connect Supabase Auth for accounts.
-2. Create a `resources` table and restrict uploads/changes to verified admins.
-3. Store files in Supabase Storage or Cloudflare R2.
-4. Add server-side authorization and row-level security before allowing uploads.
-5. Save quiz attempts and student progress to the database.
-6. Add an admin upload form with file type/size validation.
-
-Only distribute materials you created, own, or are licensed/authorized to share.
+## Security notes
+- Passwords are PBKDF2-hashed using Web Crypto, never stored in plaintext.
+- Session IDs are random, stored hashed in D1, and delivered as HttpOnly/Secure/SameSite cookies.
+- Upload routes require an owner session, restrict file type and size, and store content in R2.
+- This is a starter implementation; perform security review and test on a staging project before inviting students.

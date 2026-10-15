@@ -2,122 +2,110 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101828">
-  <meta name="description" content="A focused NEET preparation hub for notes, practice and study progress.">
-  <title>NEET Study Hub</title>
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071225">
+  <meta name="description" content="NEET Study Hub — resources, mock tests, planning and progress.">
+  <title>NEET Study Hub | @Ayush9845</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <a class="brand" href="#" aria-label="NEET Study Hub home">
-        <span class="brand-mark">N<span>+</span></span>
-        <span><strong>NEET Study Hub</strong><small>PREP SMARTER</small></span>
-      </a>
-      <nav class="side-nav" aria-label="Main navigation">
-        <button class="nav-link active" data-view="home"><span>⌂</span> Overview</button>
-        <button class="nav-link" data-view="library"><span>▤</span> Study library</button>
-        <button class="nav-link" data-view="practice"><span>✓</span> Practice quiz</button>
-        <button class="nav-link" data-view="progress"><span>◷</span> My progress</button>
-      </nav>
-      <div class="sidebar-note">
-        <span class="note-icon">✦</span>
-        <strong>Small steps. Big results.</strong>
-        <p>Consistency beats cramming. Show up for your goal today.</p>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="NEET Study Hub home">
+      <span class="brand-mark">N<span>+</span></span>
+      <span><strong>NEET Study Hub</strong><small>POWERED BY <b>@Ayush9845</b></small></span>
+    </a>
+    <button id="mobileMenu" class="icon-btn mobile-menu" aria-label="Open navigation">☰</button>
+    <nav id="nav" class="nav">
+      <button class="nav-link active" data-view="dashboard">Overview</button>
+      <button class="nav-link" data-view="library">Study Library</button>
+      <button class="nav-link" data-view="tests">Mock Tests</button>
+      <button class="nav-link" data-view="planner">Study Planner</button>
+      <button class="nav-link" data-view="notices">Notices</button>
+    </nav>
+    <div class="top-actions"><span id="userPill" class="user-pill">Guest mode</span><button id="authBtn" class="btn btn-primary btn-sm">Sign in</button></div>
+  </header>
+
+  <main class="shell">
+    <section class="hero panel">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="live-dot"></span> YOUR NEXT CHAPTER STARTS HERE</div>
+        <h1>Prepare smarter.<br><span>Rise higher.</span></h1>
+        <p>A focused workspace for your NEET journey — study resources, timed practice, daily goals and measurable progress.</p>
+        <div class="hero-actions"><button class="btn btn-primary" data-go="library">Explore library <span>↗</span></button><button class="btn btn-ghost" data-go="tests">Practice a test <span>→</span></button></div>
+        <div class="hero-meta"><span>✦ Physics</span><span>✦ Chemistry</span><span>✦ Biology</span></div>
       </div>
-      <div class="sidebar-footer">Independent learning project<br>Not affiliated with any coaching provider.</div>
-    </aside>
+      <div class="hero-visual">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="core-card"><div class="core-symbol">✦</div><div class="core-label">YOUR GOAL</div><div class="core-number">NEET <span>2027</span></div><div class="core-line"><span></span></div><small>One focused day at a time.</small></div>
+        <div class="float-chip chip-top"><span class="chip-icon blue">↗</span><span><b>Consistency</b><small>beats intensity</small></span></div>
+        <div class="float-chip chip-bottom"><span class="chip-icon violet">✧</span><span><b>Keep going</b><small>your effort counts</small></span></div>
+      </div>
+    </section>
 
-    <main class="main">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow" id="today-label">YOUR STUDY SPACE</p>
-          <h1 id="page-title">Good to see you, aspirant.</h1>
+    <section class="section-head"><div><div class="eyebrow">YOUR WORKSPACE</div><h2>Today at a glance</h2></div><span class="muted" id="todayLabel"></span></section>
+    <section class="stats-grid">
+      <article class="stat-card"><div class="stat-top"><span class="stat-icon blue">◷</span><span class="trend">DAILY GOAL</span></div><div class="stat-value"><span id="studyMinutes">0</span><small>min</small></div><div class="stat-caption">Study time logged today</div><div class="mini-progress"><span id="goalProgress"></span></div></article>
+      <article class="stat-card"><div class="stat-top"><span class="stat-icon purple">◎</span><span class="trend">PRACTICE</span></div><div class="stat-value"><span id="testsTaken">0</span><small>tests</small></div><div class="stat-caption">Practice sessions completed</div><div class="stat-foot">Build accuracy with review</div></article>
+      <article class="stat-card"><div class="stat-top"><span class="stat-icon green">↗</span><span class="trend">ACCURACY</span></div><div class="stat-value"><span id="accuracy">—</span><small id="accuracySuffix"></small></div><div class="stat-caption">Across completed demo tests</div><div class="stat-foot">Review every mistake</div></article>
+      <article class="stat-card"><div class="stat-top"><span class="stat-icon orange">⚑</span><span class="trend">FOCUS</span></div><div class="stat-value"><span id="tasksDone">0</span><small>tasks</small></div><div class="stat-caption">Planner tasks completed</div><div class="stat-foot">Small wins add up</div></article>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel main-panel">
+        <div class="panel-heading"><div><div class="eyebrow">QUICK ACCESS</div><h2>Pick up where you left off</h2></div><button class="text-btn" data-go="library">All resources ↗</button></div>
+        <div class="subject-grid">
+          <button class="subject-card physics" data-subject="Physics"><span class="subject-glyph">ϟ</span><span><b>Physics</b><small>Concepts & numericals</small></span><span class="subject-arrow">↗</span></button>
+          <button class="subject-card chemistry" data-subject="Chemistry"><span class="subject-glyph">⚗</span><span><b>Chemistry</b><small>Reactions & revision</small></span><span class="subject-arrow">↗</span></button>
+          <button class="subject-card biology" data-subject="Biology"><span class="subject-glyph">⌬</span><span><b>Biology</b><small>NCERT & diagrams</small></span><span class="subject-arrow">↗</span></button>
         </div>
-        <button id="install-btn" class="button button-outline hidden" type="button">＋ Install app</button>
-      </header>
+        <div class="panel-heading lower-heading"><div><div class="eyebrow">RECENT RESOURCES</div><h2>Continue learning</h2></div></div>
+        <div id="recentResources" class="resource-list"></div>
+      </article>
+      <aside class="side-stack">
+        <article class="panel focus-panel"><div class="panel-heading"><div><div class="eyebrow">STAY ON TRACK</div><h2>Daily focus</h2></div><span class="sparkle">✦</span></div><p class="muted">Set a realistic target and protect your study time.</p><div class="goal-number"><strong id="goalText">120</strong><span>minutes / day</span></div><input id="goalSlider" type="range" min="30" max="360" step="15" value="120" aria-label="Daily study goal"><div class="range-labels"><span>30 min</span><span>6 hours</span></div><button id="saveGoal" class="btn btn-secondary full">Save daily goal</button><div class="focus-tip"><span>✧</span><span><b>Focus tip</b><small>Try 45 minutes of focused study, then take a short break.</small></span></div></article>
+        <article class="panel notice-panel"><div class="panel-heading"><div><div class="eyebrow">BULLETIN</div><h2>Latest notices</h2></div><button class="text-btn" data-go="notices">View all</button></div><div id="noticePreview"></div></article>
+      </aside>
+    </section>
 
-      <section id="view-home" class="view">
-        <div class="hero">
-          <div class="hero-content">
-            <span class="pill">NEET PREPARATION • 2027</span>
-            <h2>Make today<br><em>count.</em></h2>
-            <p>Your notes, focused practice and daily progress — in one calm workspace.</p>
-            <button class="button button-light" data-go="library">Explore study library <span>↗</span></button>
-          </div>
-          <div class="hero-art" aria-hidden="true">
-            <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
-            <div class="book-stack"><div class="book book-a"></div><div class="book book-b"></div><div class="book book-c"></div><div class="spark">✦</div></div>
-            <div class="floating-card"><span>DAILY FOCUS</span><strong>1% better</strong><small>every single day</small></div>
-          </div>
-        </div>
+    <section id="view-library" class="view-section hidden">
+      <div class="section-head"><div><div class="eyebrow">LEARN AT YOUR PACE</div><h2>Study library</h2><p class="muted">Browse authorized notes, books and lecture resources.</p></div><button id="adminUploadBtn" class="btn btn-secondary hidden">＋ Add resource</button></div>
+      <div class="filter-bar"><label class="searchbox"><span>⌕</span><input id="resourceSearch" placeholder="Search resources..." type="search"></label><select id="subjectFilter" aria-label="Filter by subject"><option value="all">All subjects</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>General</option></select><select id="typeFilter" aria-label="Filter by type"><option value="all">All formats</option><option value="pdf">PDF</option><option value="epub">EPUB</option><option value="video">Video</option><option value="link">Link</option></select></div>
+      <div id="libraryGrid" class="library-grid"></div>
+      <div id="emptyLibrary" class="empty-state hidden"><span>⌕</span><h3>No resources found</h3><p>Try another search or filter. Owner-uploaded resources will appear here.</p></div>
+    </section>
 
-        <div class="section-heading">
-          <div><p class="eyebrow">YOUR DASHBOARD</p><h2>Study snapshot</h2></div>
-          <span class="muted">Saved on this device</span>
-        </div>
-        <div class="stats-grid">
-          <article class="stat-card"><span class="stat-icon purple">▤</span><span class="stat-label">Resources viewed</span><strong id="resources-count">0</strong><small>Keep exploring</small></article>
-          <article class="stat-card"><span class="stat-icon green">✓</span><span class="stat-label">Quiz attempts</span><strong id="quiz-count">0</strong><small>Practice makes progress</small></article>
-          <article class="stat-card"><span class="stat-icon orange">◎</span><span class="stat-label">Best quiz score</span><strong id="best-score">—</strong><small>Out of 100%</small></article>
-        </div>
+    <section id="view-tests" class="view-section hidden">
+      <div class="section-head"><div><div class="eyebrow">PRACTICE WITH PURPOSE</div><h2>Mock test centre</h2><p class="muted">Start with the included sample quiz. Add your own question bank as you grow.</p></div></div>
+      <div class="test-layout"><article class="panel test-intro"><div class="test-emblem">✦</div><div class="eyebrow">QUICK PRACTICE</div><h2>NEET warm-up</h2><p class="muted">A short sample set to demonstrate question navigation, scoring and answer review.</p><div class="test-facts"><span>◷ <b>5 questions</b></span><span>◎ <b>Mixed subjects</b></span><span>✓ <b>Instant review</b></span></div><button id="startTest" class="btn btn-primary">Start practice test →</button><p class="fine-print">Sample questions are illustrative, not an official NEET paper.</p></article><article class="panel test-history"><div class="panel-heading"><div><div class="eyebrow">YOUR ACTIVITY</div><h2>Recent attempts</h2></div></div><div id="testHistory"></div></article></div>
+      <div id="quizPanel" class="panel quiz-panel hidden"></div>
+    </section>
 
-        <div class="content-grid">
-          <section class="panel">
-            <div class="panel-heading"><div><p class="eyebrow">PICK UP A SUBJECT</p><h2>Study library</h2></div><button class="text-button" data-go="library">View all →</button></div>
-            <div class="subject-list">
-              <button class="subject-row" data-subject="Biology"><span class="subject-symbol biology">B</span><span><strong>Biology</strong><small>Botany & Zoology</small></span><span class="row-arrow">↗</span></button>
-              <button class="subject-row" data-subject="Chemistry"><span class="subject-symbol chemistry">C</span><span><strong>Chemistry</strong><small>Physical, Organic & Inorganic</small></span><span class="row-arrow">↗</span></button>
-              <button class="subject-row" data-subject="Physics"><span class="subject-symbol physics">P</span><span><strong>Physics</strong><small>Concepts & numericals</small></span><span class="row-arrow">↗</span></button>
-            </div>
-          </section>
-          <section class="panel focus-panel">
-            <p class="eyebrow">YOUR NEXT STEP</p><h2>One focused session.</h2>
-            <p class="muted">Choose one topic, study without distractions, then test what you remember.</p>
-            <div class="focus-steps"><span>01</span><p><strong>Learn</strong><small>Review a chapter or set of notes.</small></p></div>
-            <div class="focus-steps"><span>02</span><p><strong>Practice</strong><small>Try the quiz and check explanations.</small></p></div>
-            <div class="focus-steps"><span>03</span><p><strong>Reflect</strong><small>Record what needs another revision.</small></p></div>
-            <button class="button button-dark full" data-go="practice">Start a quick quiz <span>→</span></button>
-          </section>
-        </div>
-      </section>
+    <section id="view-planner" class="view-section hidden">
+      <div class="section-head"><div><div class="eyebrow">MAKE IT HAPPEN</div><h2>Study planner</h2><p class="muted">Plan the next action, then mark it done.</p></div></div>
+      <div class="planner-layout"><article class="panel"><div class="panel-heading"><div><div class="eyebrow">TODAY'S PLAN</div><h2>Your task list</h2></div><span id="taskCount" class="user-pill">0 tasks</span></div><form id="taskForm" class="task-form"><input id="taskInput" required maxlength="120" placeholder="e.g. Revise human physiology"><select id="taskSubject"><option>Biology</option><option>Physics</option><option>Chemistry</option><option>General</option></select><button class="btn btn-primary" type="submit">Add task</button></form><div id="taskList" class="task-list"></div></article><article class="panel analytics-panel"><div class="eyebrow">YOUR CONSISTENCY</div><h2>Study activity</h2><p class="muted">Your saved study minutes and completed tasks.</p><div id="activityBars" class="activity-bars"></div><div class="analytics-note"><span class="stat-icon blue">↗</span><span><b>Progress over perfection</b><small>Your progress is saved on this device until you sign in to sync it.</small></span></div><form id="logStudyForm" class="log-form"><label for="logMinutes">Log a study session</label><div><input id="logMinutes" type="number" min="5" max="600" value="45" required><span>minutes</span><button class="btn btn-secondary" type="submit">Add session</button></div></form></article></div>
+    </section>
 
-      <section id="view-library" class="view hidden">
-        <div class="page-intro"><p class="eyebrow">LEARN AT YOUR PACE</p><h2>Study library</h2><p>Find notes and resources by subject. Demo entries are placeholders—add only materials you own or are permitted to share.</p></div>
-        <div class="library-tools"><label class="search-box"><span>⌕</span><input id="resource-search" type="search" placeholder="Search chapters, notes, topics…" aria-label="Search resources"></label><select id="subject-filter" aria-label="Filter by subject"><option value="All">All subjects</option><option>Biology</option><option>Chemistry</option><option>Physics</option></select></div>
-        <div id="resource-grid" class="resource-grid"></div>
-        <div class="admin-hint"><strong>Want to add your own resources?</strong><p>This starter keeps demo resource details in <code>app.js</code>. In the next version, we can connect a secure admin upload panel and cloud storage.</p></div>
-      </section>
+    <section id="view-notices" class="view-section hidden">
+      <div class="section-head"><div><div class="eyebrow">STAY INFORMED</div><h2>Announcements & notices</h2><p class="muted">Updates for the NEET Study Hub community.</p></div><button id="adminNoticeBtn" class="btn btn-secondary hidden">＋ Post notice</button></div>
+      <div id="noticeList" class="notice-list"></div>
+    </section>
 
-      <section id="view-practice" class="view hidden">
-        <div class="page-intro"><p class="eyebrow">CHECK YOUR UNDERSTANDING</p><h2>Practice quiz</h2><p>A short sample quiz with instant feedback. Questions are illustrative starter content, not an official NEET paper.</p></div>
-        <div class="quiz-layout">
-          <div class="panel quiz-panel">
-            <div class="quiz-top"><span class="pill pill-soft" id="question-count">QUESTION 1 OF 3</span><span class="muted" id="quiz-progress-text">0 answered</span></div>
-            <div class="progress-track"><div id="quiz-progress-bar"></div></div>
-            <div id="quiz-area"></div>
-          </div>
-          <aside class="panel quiz-aside"><span class="stat-icon purple">✦</span><h3>Learn from every answer</h3><p class="muted">Read the explanation after answering. Understanding why an option is correct is more useful than memorising a score.</p><div class="quiz-rule"><span>+4</span> Correct answer</div><div class="quiz-rule"><span>−1</span> Incorrect answer</div><div class="quiz-rule"><span>0</span> Unanswered</div><p class="tiny muted">Scoring shown for practice only; adjust it to match the current exam pattern when creating your own test.</p></aside>
-        </div>
-      </section>
+    <section id="view-admin" class="view-section hidden">
+      <div class="section-head"><div><div class="eyebrow">OWNER WORKSPACE</div><h2>Manage your hub</h2><p class="muted">Only the authenticated owner can publish resources and notices.</p></div><span class="owner-badge">● OWNER</span></div>
+      <div class="admin-grid">
+        <article class="panel"><div class="eyebrow">LIBRARY MANAGEMENT</div><h2>Publish a resource</h2><form id="uploadForm" class="stack-form"><label>Resource title<input name="title" required maxlength="140" placeholder="e.g. Cell Biology revision notes"></label><label>Subject<select name="subject"><option>Biology</option><option>Physics</option><option>Chemistry</option><option>General</option></select></label><label>Format<select name="type" id="uploadType"><option value="pdf">PDF file</option><option value="epub">EPUB file</option><option value="video">Video file (or use link below)</option><option value="link">External video/resource link</option></select></label><label id="fileLabel">Choose file<input name="file" id="resourceFile" type="file" accept=".pdf,.epub,video/*"></label><label id="urlLabel" class="hidden">Resource URL<input name="url" type="url" placeholder="https://..."></label><label>Description<textarea name="description" rows="3" maxlength="400" placeholder="What will students learn?"></textarea></label><button class="btn btn-primary" type="submit">Publish resource</button><p class="fine-print">Uploads require Cloudflare R2 setup. Use only content you own or have permission to share.</p></form></article>
+        <article class="panel"><div class="eyebrow">COMMUNITY UPDATES</div><h2>Post an announcement</h2><form id="noticeForm" class="stack-form"><label>Headline<input name="title" required maxlength="140" placeholder="e.g. New Biology notes added"></label><label>Message<textarea name="body" required rows="4" maxlength="1200" placeholder="Write your announcement..."></textarea></label><button class="btn btn-secondary" type="submit">Publish notice</button></form><div class="admin-warning"><b>Setup required</b><p>For real accounts and cloud uploads, configure D1, R2 and the secrets described in README.md. The frontend alone is not a secure authentication system.</p></div></article>
+      </div>
+    </section>
 
-      <section id="view-progress" class="view hidden">
-        <div class="page-intro"><p class="eyebrow">YOUR PERSONAL RECORD</p><h2>My progress</h2><p>Your demo progress is stored locally in this browser. It is not synced across devices yet.</p></div>
-        <div class="stats-grid">
-          <article class="stat-card"><span class="stat-label">Resources viewed</span><strong id="progress-resources">0</strong><small>Unique resources opened</small></article>
-          <article class="stat-card"><span class="stat-label">Quiz attempts</span><strong id="progress-quizzes">0</strong><small>Completed quizzes</small></article>
-          <article class="stat-card"><span class="stat-label">Best score</span><strong id="progress-best">—</strong><small>Highest practice score</small></article>
-        </div>
-        <section class="panel progress-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT ACTIVITY</p><h2>Keep the streak going</h2></div><button id="reset-progress" class="text-button danger">Reset local progress</button></div><div id="activity-list" class="activity-list"></div></section>
-      </section>
+    <footer class="footer"><a class="brand footer-brand" href="#"><span class="brand-mark">N<span>+</span></span><span><strong>NEET Study Hub</strong><small>BY <b>@Ayush9845</b></small></span></a><span>Built for focused preparation · Keep learning, keep rising.</span><button id="footerAdmin" class="text-btn">Owner access</button></footer>
+  </main>
 
-      <footer class="footer"><span>© <span id="year"></span> NEET Study Hub</span><span>Built for focused learning <b>✦</b></span></footer>
-    </main>
-  </div>
+  <div id="authModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="authTitle"><div class="modal-backdrop" data-close-modal></div><div class="modal-card"><button class="modal-close" data-close-modal aria-label="Close">×</button><div class="eyebrow">YOUR STUDY SPACE</div><h2 id="authTitle">Welcome back</h2><p class="muted">Sign in to sync progress and access your account.</p><div class="auth-tabs"><button class="auth-tab active" data-auth-mode="login">Sign in</button><button class="auth-tab" data-auth-mode="register">Create student account</button><button class="auth-tab" data-auth-mode="owner">Owner setup</button></div><form id="authForm" class="stack-form"><label id="nameField" class="hidden">Display name<input name="name" maxlength="80" placeholder="Your name"></label><label>Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label><label>Password<input name="password" type="password" required minlength="10" autocomplete="current-password" placeholder="At least 10 characters"></label><label id="setupSecretField" class="hidden">Owner setup secret<input name="setupSecret" type="password" autocomplete="off" placeholder="Cloudflare secret"></label><button id="authSubmit" class="btn btn-primary full" type="submit">Sign in</button><p id="authMessage" class="form-message" aria-live="polite"></p><p class="fine-print">Student accounts require backend setup. Never share your password or owner setup secret.</p></form></div></div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="./app.js"></script>
+  <script src="/app.js" defer></script>
 </body>
 </html>
